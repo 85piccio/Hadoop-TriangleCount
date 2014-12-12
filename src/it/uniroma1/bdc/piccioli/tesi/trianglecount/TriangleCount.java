@@ -1,7 +1,5 @@
 package it.uniroma1.bdc.piccioli.tesi.trianglecount;
 
-
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -41,6 +39,7 @@ public class TriangleCount extends Configured implements Tool {
 		Path in = new Path(args[0]);
 		Path out = new Path(args[1]);
 		Path output1 = new Path("/result_job1");//temp results directory
+		Path output2 = new Path("/result_job2");//temp results directory
 
 		job1.setInputFormatClass(KeyValueTextInputFormat.class);
 		job1.setOutputFormatClass(TextOutputFormat.class);
@@ -51,9 +50,8 @@ public class TriangleCount extends Configured implements Tool {
 		FileInputFormat.addInputPath(job1, in);
 		FileOutputFormat.setOutputPath(job1, output1);	
 		
-		
-		
 		job1.waitForCompletion(true);
+		
 
 		Job job2 = Job.getInstance(conf);
 		job2.setJobName("TriangleCount-step2");
@@ -64,15 +62,14 @@ public class TriangleCount extends Configured implements Tool {
 
 		MultipleInputs.addInputPath(job2, in, KeyValueTextInputFormat.class,Mapper2.class);
 		MultipleInputs.addInputPath(job2, output1, KeyValueTextInputFormat.class,Mapper2.class);
-		
-//		job2.setInputFormatClass(KeyValueTextInputFormat.class);
+
 		job2.setOutputFormatClass(TextOutputFormat.class);			
 
 		job2.setOutputKeyClass(Text.class);
 		job2.setOutputValueClass(Text.class);
 		
 		FileInputFormat.addInputPath(job2, output1);
-		FileOutputFormat.setOutputPath(job2, out);	
+		FileOutputFormat.setOutputPath(job2, output2);	
 		
 		int fine = job2.waitForCompletion(true) ? 0 : -1;
 
@@ -80,6 +77,30 @@ public class TriangleCount extends Configured implements Tool {
 		FileSystem fs = FileSystem.get(conf);
 		// delete file, true for recursive
 		fs.delete(new Path("/result_job1/"), true);
+		
+		
+		//ultimo job - calcolo totale triangoli
+		Job job3 = Job.getInstance(conf);
+		job3.setJobName("TriangleCount-step2");
+
+		job3.setReducerClass(Reducer3.class);
+		job3.setMapperClass(Mapper3.class);
+		job3.setJarByClass(TriangleCount.class);
+
+
+		job3.setInputFormatClass(KeyValueTextInputFormat.class);
+		job3.setOutputFormatClass(TextOutputFormat.class);			
+
+		job3.setOutputKeyClass(Text.class);
+		job3.setOutputValueClass(Text.class);
+		
+		FileInputFormat.addInputPath(job3, output2);
+		FileOutputFormat.setOutputPath(job3, out);	
+		
+		fine = job3.waitForCompletion(true) ? 0 : -1;
+
+		// delete file, true for recursive
+		fs.delete(new Path("/result_job2/"), true);
 
 		return fine;
 
@@ -103,7 +124,7 @@ public class TriangleCount extends Configured implements Tool {
 	}
 
 	static int printUsage() {
-		System.out.println("DegreeCalculator <input> <output>");
+		System.out.println("TriangleCount <input> <output>");
 		ToolRunner.printGenericCommandUsage(System.out);
 		return -1;
 	}
