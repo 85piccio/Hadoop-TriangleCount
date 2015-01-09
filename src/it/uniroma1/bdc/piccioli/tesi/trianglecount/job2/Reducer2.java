@@ -1,4 +1,4 @@
-package it.uniroma1.bdc.piccioli.tesi.trianglecount;
+package it.uniroma1.bdc.piccioli.tesi.trianglecount.job2;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,5 +1,12 @@
 package it.uniroma1.bdc.piccioli.tesi.trianglecount;
 
+import it.uniroma1.bdc.piccioli.tesi.trianglecount.job1.Mapper1;
+import it.uniroma1.bdc.piccioli.tesi.trianglecount.job1.Reducer1;
+import it.uniroma1.bdc.piccioli.tesi.trianglecount.job2.Mapper2;
+import it.uniroma1.bdc.piccioli.tesi.trianglecount.job2.Reducer2;
+import it.uniroma1.bdc.piccioli.tesi.trianglecount.job3.Mapper3;
+import it.uniroma1.bdc.piccioli.tesi.trianglecount.job3.Reducer3;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -81,7 +88,7 @@ public class TriangleCount extends Configured implements Tool {
 		
 		//ultimo job - calcolo totale triangoli
 		Job job3 = Job.getInstance(conf);
-		job3.setJobName("TriangleCount-step2");
+		job3.setJobName("TriangleCount-step3");
 
 		job3.setReducerClass(Reducer3.class);
 		job3.setMapperClass(Mapper3.class);
