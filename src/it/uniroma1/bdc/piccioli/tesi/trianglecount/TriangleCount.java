@@ -37,6 +37,7 @@ public class TriangleCount extends Configured implements Tool {
 		conf.setInt(KEEP_ABOVE, keepAbove);
 		Job job1 = Job.getInstance(conf);
 
+		
 		job1.setJobName("TriangleCount-step1");
 
 		job1.setMapperClass(Mapper1.class);
@@ -61,6 +62,7 @@ public class TriangleCount extends Configured implements Tool {
 		
 
 		Job job2 = Job.getInstance(conf);
+		
 		job2.setJobName("TriangleCount-step2");
 		
 
